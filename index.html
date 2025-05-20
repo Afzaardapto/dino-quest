@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dino Game</title>
+  </head>
+  <body>
+    <h1>Dino Game</h1>
+    <button onclick="game.killEnemy('chicken')">Kill Chicken</button>
+    <button onclick="game.killEnemy('dino')">Kill Dino</button>
+    <button onclick="game.unlockNextDino()">Unlock Dino</button>
+    <button onclick="game.showStats()">Show Stats</button>
+
+    <pre id="output"></pre>
+
+    <script>
+      class Dinosaur {
+        constructor(name, cost, health, attack, speed, ability) {
+          this.name = name;
+          this.cost = cost;
+          this.health = health;
+          this.attack = attack;
+          this.speed = speed;
+          this.ability = ability;
+        }
+      }
+
+      class Game {
+        constructor() {
+          this.dinoCoins = 0;
+          this.dinoIndex = 0;
+          this.dinoStore = this.createDinoStore();
+          this.unlockedDinos = [this.dinoStore[0]];
+          this.currentDino = this.unlockedDinos[0];
+        }
+
+        createDinoStore() {
+          return [
+            new Dinosaur("Velociraptor", 0, 100, 20, "Fast", "Leap Slash"),
+            new Dinosaur("Triceratops", 100, 250, 35, "Slow", "Horn Charge"),
+            new Dinosaur("Stegosaurus", 300, 300, 25, "Medium", "Tail Sweep"),
+            new Dinosaur("Pteranodon", 500, 150, 15, "Very Fast", "Sky Dive"),
+            new Dinosaur("Ankylosaurus", 700, 400, 40, "Very Slow", "Shell Shield"),
+            new Dinosaur("Spinosaurus", 900, 450, 50, "Medium", "Roar Blast"),
+            new Dinosaur("T-Rex", 1100, 500, 70, "Fast", "Devour")
+          ];
+        }
+
+        killEnemy(type) {
+          if (type === "dino") {
+            this.dinoCoins += 20;
+            this.log(`You killed a dinosaur! +20 coins`);
+          } else if (type === "chicken") {
+            this.dinoCoins += 15;
+            this.log(`You killed a chicken! +15 coins`);
+          }
+        }
+
+        unlockNextDino() {
+          const nextIndex = this.unlockedDinos.length;
+          if (nextIndex >= this.dinoStore.length) {
+            this.log("All dinosaurs unlocked!");
+            return;
+          }
+
+          const nextDino = this.dinoStore[nextIndex];
+          if (this.dinoCoins >= nextDino.cost) {
+            this.dinoCoins -= nextDino.cost;
+            this.unlockedDinos.push(nextDino);
+            this.log(`Unlocked ${nextDino.name}! 🦖`);
+          } else {
+            this.log(`Not enough Dino Coins! (${nextDino.cost} needed)`);
+          }
+        }
+
+        showStats() {
+          const d = this.currentDino;
+          this.log(`
+🦕 Current Dino: ${d.name}
+Health: ${d.health}
+Attack: ${d.attack}
+Speed: ${d.speed}
+Ability: ${d.ability}
+💰 Dino Coins: ${this.dinoCoins}
+          `);
+        }
+
+        log(message) {
+          const output = document.getElementById("output");
+          output.innerText += message + "\n";
+        }
+      }
+
+      const game = new Game();
+    </script>
+  </body>
+</html>
